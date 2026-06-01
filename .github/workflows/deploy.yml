@@ -39,13 +39,13 @@ jobs:
             - name: Set up SSH
               run: |
                   mkdir -p ~/.ssh
-                  echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+                  echo "${{ secrets.HERMES_SSH_KEY }}" > ~/.ssh/id_rsa
                   chmod 600 ~/.ssh/id_rsa
-                  ssh-keyscan -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+                  ssh-keyscan -p ${{ secrets.HERMES_PORT }} ${{ secrets.HERMES_HOST }} >> ~/.ssh/known_hosts
 
             - name: Check SSH connectivity
               run: |
-                  ssh -i ~/.ssh/id_rsa -p ${{ secrets.SERVER_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} 'echo "SSH ok"'
+                  ssh -i ~/.ssh/id_rsa -p ${{ secrets.HERMES_PORT }} -o StrictHostKeyChecking=no ${{ secrets.HERMES_USERNAME }}@${{ secrets.HERMES_HOST }} 'echo "SSH ok"'
 
     copy-files:
         needs: connect
@@ -57,17 +57,17 @@ jobs:
             - name: Set up SSH
               run: |
                   mkdir -p ~/.ssh
-                  echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+                  echo "${{ secrets.HERMES_SSH_KEY }}" > ~/.ssh/id_rsa
                   chmod 600 ~/.ssh/id_rsa
-                  ssh-keyscan -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+                  ssh-keyscan -p ${{ secrets.HERMES_PORT }} ${{ secrets.HERMES_HOST }} >> ~/.ssh/known_hosts
 
             - name: Prepare remote directory
               run: |
-                  ssh -i ~/.ssh/id_rsa -p ${{ secrets.SERVER_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} 'mkdir -p ~/home/converter_bot/'
+                  ssh -i ~/.ssh/id_rsa -p ${{ secrets.HERMES_PORT }} -o StrictHostKeyChecking=no ${{ secrets.HERMES_USERNAME }}@${{ secrets.HERMES_HOST }} 'mkdir -p ~/home/converter_bot/'
 
             - name: Copy files via SSH
               run: |
-                  scp -i ~/.ssh/id_rsa -P ${{ secrets.SERVER_PORT }} -o StrictHostKeyChecking=no -r ./* ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }}:~/home/converter_bot/
+                  scp -i ~/.ssh/id_rsa -P ${{ secrets.HERMES_PORT }} -o StrictHostKeyChecking=no -r ./* ${{ secrets.HERMES_USERNAME }}@${{ secrets.HERMES_HOST }}:~/home/converter_bot/
 
     build-image:
         needs: copy-files
@@ -76,13 +76,13 @@ jobs:
             - name: Set up SSH
               run: |
                   mkdir -p ~/.ssh
-                  echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+                  echo "${{ secrets.HERMES_SSH_KEY }}" > ~/.ssh/id_rsa
                   chmod 600 ~/.ssh/id_rsa
-                  ssh-keyscan -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+                  ssh-keyscan -p ${{ secrets.HERMES_PORT }} ${{ secrets.HERMES_HOST }} >> ~/.ssh/known_hosts
 
             - name: Build Docker image on server
               run: |
-                  ssh -i ~/.ssh/id_rsa -p ${{ secrets.SERVER_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} << 'EOF'
+                  ssh -i ~/.ssh/id_rsa -p ${{ secrets.HERMES_PORT }} -o StrictHostKeyChecking=no ${{ secrets.HERMES_USERNAME }}@${{ secrets.HERMES_HOST }} << 'EOF'
                     sudo apt update
                     sudo apt install -y docker.io
                     sudo systemctl start docker
@@ -100,13 +100,13 @@ jobs:
             - name: Set up SSH
               run: |
                   mkdir -p ~/.ssh
-                  echo "${{ secrets.SERVER_SSH_KEY }}" > ~/.ssh/id_rsa
+                  echo "${{ secrets.HERMES_SSH_KEY }}" > ~/.ssh/id_rsa
                   chmod 600 ~/.ssh/id_rsa
-                  ssh-keyscan -p ${{ secrets.SERVER_PORT }} ${{ secrets.SERVER_HOST }} >> ~/.ssh/known_hosts
+                  ssh-keyscan -p ${{ secrets.HERMES_PORT }} ${{ secrets.HERMES_HOST }} >> ~/.ssh/known_hosts
 
             - name: Run container
               run: |
-                  ssh -i ~/.ssh/id_rsa -p ${{ secrets.SERVER_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_HOST }} << EOF
+                  ssh -i ~/.ssh/id_rsa -p ${{ secrets.HERMES_PORT }} -o StrictHostKeyChecking=no ${{ secrets.HERMES_USERNAME }}@${{ secrets.HERMES_HOST }} << EOF
                     docker run -d --name=converter_bot --restart=unless-stopped \
                       -e BOT_TOKEN=${{ secrets.BOT_TOKEN }} \
                       -e DB_PATH=${{ secrets.DB_PATH }} \
