@@ -4,9 +4,9 @@ on:
     push:
         branches:
             - master
-    pull_request:
-        branches:
-            - master
+#    pull_request:
+#        branches:
+#            - master
 
 jobs:
     tests:
@@ -106,9 +106,9 @@ jobs:
 
             - name: Run container
               run: |
-                  ssh -i ~/.ssh/id_rsa -p ${{ secrets.HERMES_PORT }} -o StrictHostKeyChecking=no ${{ secrets.HERMES_USERNAME }}@${{ secrets.HERMES_HOST }} << EOF
-                    docker run -d --name=converter_bot --restart=unless-stopped \
-                      -e BOT_TOKEN=${{ secrets.BOT_TOKEN }} \
-                      -e DB_PATH=${{ secrets.DB_PATH }} \
-                      converter_bot:latest
+                  ssh -i ~/.ssh/id_rsa -p ${{ secrets.HERMES_PORT }} -o StrictHostKeyChecking=no ${{ secrets.HERMES_USERNAME }}@${{ secrets.HERMES_HOST }} << 'EOF'
+                  docker run -d --name=converter_bot --restart=unless-stopped \
+                    -e BOT_TOKEN="${{ secrets.BOT_TOKEN }}" \
+                    -e DB_PATH="${{ secrets.DB_PATH }}" \
+                  converter_bot:latest
                   EOF
